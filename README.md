@@ -1,6 +1,6 @@
 # Precise Age Calculator
 
-A JavaScript age calculator that goes beyond "just years" — get your exact age down to the day, total days/months alive, days until your next birthday, and even what day of the week you were born on.
+ A precise JavaScript age calculator — exact years, months, days, total days alive, and days to your next birthday.
 
 Built as a hands-on project to learn the native JavaScript `Date` API in depth.
 

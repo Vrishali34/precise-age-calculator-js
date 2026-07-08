@@ -4,16 +4,14 @@ function calculateAge(dob) {
 
   // --- FIX 1: Invalid date check ---
   // If new Date() couldn't parse the string, birthDate.getTime() returns NaN.
-  // isNaN() catches that before we try to do any math with a broken date.
   if (isNaN(birthDate.getTime())) {
-    console.log("Invalid date entered. Please use a real date like '2000-06-15'.");
-    return; // stop the function here, don't run the rest
+    resultDiv.innerHTML = "Invalid date entered. Please pick a valid date.";
+    return;
   }
 
   // --- FIX 2: Future date check ---
-  // Doesn't make sense to calculate an "age" for someone not born yet.
   if (birthDate > today) {
-    console.log("Birth date is in the future. Please enter a valid past date.");
+    resultDiv.innerHTML = "Birth date is in the future. Please enter a valid past date.";
     return;
   }
 
@@ -27,6 +25,7 @@ function calculateAge(dob) {
   let days = today.getDate() - birthDate.getDate();
 
   if (days < 0) {
+    // "day 0" trick: gives the LAST day of the month before today's month
     const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
     days += prevMonth.getDate();
     months -= 1;
@@ -37,6 +36,7 @@ function calculateAge(dob) {
     years -= 1;
   }
 
+  // --- Total months alive ---
   const totalMonthsAlive = years * 12 + months;
 
   // --- Days until next birthday ---
@@ -47,9 +47,7 @@ function calculateAge(dob) {
   );
 
   // --- FIX 3: "DOB = today" edge case ---
-  // Compare only the DATE part (ignore time-of-day), so if today IS the
-  // birthday, we get 0 days left instead of wrongly jumping to next year.
-  // We do this by zeroing out today's time before comparing.
+  // Compare only the DATE part (ignore time-of-day)
   const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
   if (nextBirthday < todayDateOnly) {
@@ -66,15 +64,22 @@ function calculateAge(dob) {
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const dayBorn = dayNames[birthDate.getDay()];
 
-  console.log(`${years} years, ${months} months, ${days} days`);
-  console.log("Total days alive:", totalDaysAlive);
-  console.log("Total months alive:", totalMonthsAlive);
-  console.log("Days until next birthday:", daysUntilNextBirthday);
-  console.log("Day of week born:", dayBorn);
+  // --- Write results into the page ---
+  resultDiv.innerHTML = `
+    <p>${years} years, ${months} months, ${days} days</p>
+    <p>Total days alive: ${totalDaysAlive}</p>
+    <p>Total months alive: ${totalMonthsAlive}</p>
+    <p>Days until next birthday: ${daysUntilNextBirthday}</p>
+    <p>Day of week born: ${dayBorn}</p>
+  `;
 }
 
-// --- Test cases ---
-calculateAge("2000-06-15"); // normal case
-calculateAge("2030-01-01"); // future date -> should show error message
-calculateAge("2026-07-08"); // today's date -> should show 0 days until next birthday
-calculateAge("not-a-date"); // invalid string -> should show error message
+// --- DOM wiring ---
+const dobInput = document.getElementById("dobInput");
+const calculateBtn = document.getElementById("calculateBtn");
+const resultDiv = document.getElementById("result");
+
+calculateBtn.addEventListener("click", function () {
+  const dobValue = dobInput.value; // e.g. "2000-06-15"
+  calculateAge(dobValue);
+});

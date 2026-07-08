@@ -4,11 +4,6 @@ A JavaScript age calculator that goes beyond "just years" — get your exact age
 
 Built as a hands-on project to learn the native JavaScript `Date` API in depth.
 
-## Preview
-
-| Enter a date | Enter a month | Age calculated | Handles invalid input |
-|---|---|---|---|
-| ![Add a date](./screenshots/add-a-date.png) | ![Add a month](./screenshots/add-a-month.png) | ![Age calculated](./screenshots/age-calculated.png) | ![Invalid DOB leap year](./screenshots/invalid-dob-leap-year.png) |
 
 ## Features
 
@@ -46,11 +41,19 @@ This project was built specifically to understand JavaScript's `Date` object bey
 - Comparing dates while ignoring time-of-day, to correctly handle "birthday is today" as an edge case
 - Populating `<select>` dropdowns dynamically with JavaScript instead of hardcoding HTML options
 
-## Possible Improvements
+## Preview
 
-- Handle the Feb 29 leap-day edge case for "days until next birthday" (currently rolls to March 1 in non-leap years)
-- Add a dark/light theme toggle
-- Show a fun fact based on the birth year (e.g., major historical events)
+**Enter a date**
+![Enter a date](./screenshots/add-a-date.png)
+
+**Enter a month**
+![Enter a month](./screenshots/add-a-month.png)
+
+**Age calculated**
+![Age calculated](./screenshots/age-calculated.png)
+
+**Handles invalid input**
+![Handles invalid input](./screenshots/invalid-dob-leap-year.png)
 
 ## License
 

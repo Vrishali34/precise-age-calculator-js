@@ -1,26 +1,51 @@
+// --- Populate day and month dropdowns ---
+
+const dayInput = document.getElementById("dayInput");
+const monthInput = document.getElementById("monthInput");
+const yearInput = document.getElementById("yearInput");
+
+// Fill days 1-31
+for (let day = 1; day <= 31; day++) {
+  const option = document.createElement("option");
+  option.value = day;
+  option.textContent = day;
+  dayInput.appendChild(option);
+}
+
+// Fill months as names, but store the NUMBER (1-12) as the value
+const monthNames = ["January", "February", "March", "April", "May", "June",
+                     "July", "August", "September", "October", "November", "December"];
+
+monthNames.forEach(function (name, index) {
+  const option = document.createElement("option");
+  option.value = index + 1; // Jan = 1, since we build "YYYY-MM-DD" strings later
+  option.textContent = name;
+  monthInput.appendChild(option);
+});
+
+
 function calculateAge(dob) {
   const birthDate = new Date(dob);
   const today = new Date();
 
   // --- FIX 1: Invalid date check ---
-  // If new Date() couldn't parse the string, birthDate.getTime() returns NaN.
   if (isNaN(birthDate.getTime())) {
-    resultDiv.innerHTML = "Invalid date entered. Please pick a valid date.";
+    resultDiv.innerHTML = `<div class="error-message">Invalid date entered. Please pick a valid date.</div>`;
     return;
   }
 
   // --- FIX 2: Future date check ---
   if (birthDate > today) {
-    resultDiv.innerHTML = "Birth date is in the future. Please enter a valid past date.";
+    resultDiv.innerHTML = `<div class="error-message">Birth date is in the future. Please enter a valid past date.</div>`;
     return;
   }
 
-  // --- FIX 4: Unreasonably old date check ---
-  // Safety net in case the native date picker's year field misfires
-  // (e.g. typing gets interrupted and it commits "0001" instead of "2001")
-  const oldestReasonableYear = 1900;
-  if (birthDate.getFullYear() < oldestReasonableYear) {
-    resultDiv.innerHTML = `Please enter a year after ${oldestReasonableYear}.`;
+  // --- FIX 4 (updated): Year must be a real, positive year ---
+  // We removed the old "must be after 1900" rule since it blocked
+  // legitimate historical dates (e.g. calculating an ancient king's age).
+  // We only reject year 0 or negative, which aren't valid calendar years.
+  if (birthDate.getFullYear() < 1) {
+    resultDiv.innerHTML = `<div class="error-message">Please enter a valid year.</div>`;
     return;
   }
 
@@ -34,7 +59,6 @@ function calculateAge(dob) {
   let days = today.getDate() - birthDate.getDate();
 
   if (days < 0) {
-    // "day 0" trick: gives the LAST day of the month before today's month
     const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
     days += prevMonth.getDate();
     months -= 1;
@@ -45,7 +69,6 @@ function calculateAge(dob) {
     years -= 1;
   }
 
-  // --- Total months alive ---
   const totalMonthsAlive = years * 12 + months;
 
   // --- Days until next birthday ---
@@ -55,8 +78,6 @@ function calculateAge(dob) {
     birthDate.getDate()
   );
 
-  // --- FIX 3: "DOB = today" edge case ---
-  // Compare only the DATE part (ignore time-of-day)
   const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
   if (nextBirthday < todayDateOnly) {
@@ -73,22 +94,50 @@ function calculateAge(dob) {
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const dayBorn = dayNames[birthDate.getDay()];
 
-  // --- Write results into the page ---
+  // --- Write results into the page as stat cards ---
   resultDiv.innerHTML = `
-    <p>${years} years, ${months} months, ${days} days</p>
-    <p>Total days alive: ${totalDaysAlive}</p>
-    <p>Total months alive: ${totalMonthsAlive}</p>
-    <p>Days until next birthday: ${daysUntilNextBirthday}</p>
-    <p>Day of week born: ${dayBorn}</p>
+    <div class="stat-card highlight">
+      <span class="stat-number">${years}y ${months}m ${days}d</span>
+      <span class="stat-label">Time lived</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">${totalDaysAlive.toLocaleString()}</span>
+      <span class="stat-label">Total days alive</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">${totalMonthsAlive.toLocaleString()}</span>
+      <span class="stat-label">Total months alive</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">${daysUntilNextBirthday}</span>
+      <span class="stat-label">Days until next birthday</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">${dayBorn}</span>
+      <span class="stat-label">Day of week born</span>
+    </div>
   `;
 }
 
 // --- DOM wiring ---
-const dobInput = document.getElementById("dobInput");
 const calculateBtn = document.getElementById("calculateBtn");
 const resultDiv = document.getElementById("result");
 
 calculateBtn.addEventListener("click", function () {
-  const dobValue = dobInput.value; // e.g. "2000-06-15"
+  const day = dayInput.value;
+  const month = monthInput.value;
+  const year = yearInput.value;
+
+  // Basic check: make sure something was actually picked/typed in all 3 fields
+  if (!day || !month || !year) {
+    resultDiv.innerHTML = `<div class="error-message">Please fill in day, month, and year.</div>`;
+    return;
+  }
+
+  // Zero-pad day/month so "5" becomes "05" — required for YYYY-MM-DD format
+  const paddedMonth = String(month).padStart(2, "0");
+  const paddedDay = String(day).padStart(2, "0");
+
+  const dobValue = `${year}-${paddedMonth}-${paddedDay}`;
   calculateAge(dobValue);
 });

@@ -12,7 +12,8 @@
     <h1>Precise Age Calculator</h1>
 
     <label for="dobInput">Enter your Date of Birth:</label>
-    <input type="date" id="dobInput" />
+    <!-- min/max stop the native picker from allowing absurd years like 0001 -->
+    <input type="date" id="dobInput" min="1900-01-01" max="2026-07-08" />
 
     <button id="calculateBtn">Calculate Age</button>
 

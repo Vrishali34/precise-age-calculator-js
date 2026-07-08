@@ -15,6 +15,15 @@ function calculateAge(dob) {
     return;
   }
 
+  // --- FIX 4: Unreasonably old date check ---
+  // Safety net in case the native date picker's year field misfires
+  // (e.g. typing gets interrupted and it commits "0001" instead of "2001")
+  const oldestReasonableYear = 1900;
+  if (birthDate.getFullYear() < oldestReasonableYear) {
+    resultDiv.innerHTML = `Please enter a year after ${oldestReasonableYear}.`;
+    return;
+  }
+
   // --- Total days alive ---
   const msInOneDay = 1000 * 60 * 60 * 24;
   const totalDaysAlive = Math.floor((today - birthDate) / msInOneDay);

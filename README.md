@@ -15,6 +15,8 @@ Built as a hands-on project to learn the native JavaScript `Date` API in depth.
 - Supports any historical date (not limited to recent years — calculate the age of a birth date from centuries ago)
 - Handles edge cases: invalid dates, future dates, and same-day birthdays
 
+🔗 **[Live Demo](https://precise-age-calculator-js.netlify.app)**
+
 ## Tech Stack
 
 - HTML
